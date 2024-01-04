@@ -2,13 +2,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Alpine Plugins -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
     <script src="//unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.4/axios.min.js" integrity="sha512-ANd7ZJmixP2T0hxOP4bS6hkci01fxyrQSyRdaY7IsWq1WlKsD0WwWBDVDZbnMR7CJZVKCTkDx/q5D5n2C2C+vg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        [x-cloak] {
+            display: none;
+        }
+    </style>
     <title>Document</title>
 </head>
 <body>
-    <h1 class="text-3xl font-bold underline">
-        Hello world!
-      </h1>
+   <div class="container mx-auto mt-6 max-w-sm">
+        <h1 class="text-5xl mb-4">Alpine.js Demo</h1>
+
+
+        <!-- x-data alpine component -->
+        <div x-data="{
+            open: false,
+            name: 'Andrew',
+            search: '',
+            posts: [
+                { title: 'Post One' },
+                { title: 'Post Two' },
+                { title: 'Post Three' },
+                { title: 'Post Four' }
+            ]
+        }">
+
+            <!-- x-on -->
+            <button
+                @click="open = !open"
+                :class="open ? 'bg-blue-800' : 'bg-slate-700'"
+                class="text-white px-4 py-2 rounded-xl"
+            >
+                Toggle
+            </button>
+
+            <!-- x-show -->
+            <div x-show="open" x-transition x-cloak>
+                <p class="bg-gray-200 p-4 my-6 rounded">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam doloribus aperiam aliquid hic asperiores illum, recusandae ad autem repellendus tenetur temporibus numquam. Dolorum enim quidem itaque, eaque esse nisi id!
+                </p>
+            </div>
+
+            <!-- x-text -->
+            <div class="my-4">
+                The Value of name is <span x-text="name" class="font-bold"></span>
+            </div>
+
+            <!-- x-effect -->
+            <div x-effect="console.log(open)"></div>
+
+            <!-- x-model -->
+            <input x-model="search" type="text" class="border p-2 w-full mb-2 mt-6" placeholder="Search for something...">
+            <p>
+                <span class="font-bold">Searching for:</span>
+                <span x-text="search"></span>
+            </p>
+
+            <!-- x-if -->
+            <template x-if="open">
+                <div class="bg-gray-50 p-2 mt-8">
+                    Template based on a condition
+                </div>
+            </template>
+
+            <!-- x-for -->
+            <h3 class="text-2xl mt-6 mb-3 font-bold">Posts</h3>
+            <template x-for="post in posts">
+                <div x-text="post.title"></div>
+            </template>
+            <button @click="posts.push({title: 'New Posts'})" class="bg-blue-800 text-white px-4 py-2 rounded-lg mt-4">
+                Add Post
+            </button>
+
+            <div class="my-6">
+                <!-- x-ref -->
+                <div class="" x-ref="text">Hello World</div>
+                <button @click="$refs.text.remove()" class="bg-black text-white p-2 rounded-lg">Click</button>
+
+                <!-- x-html -->
+                <div class="" x-html="(await axios.get('./partial.html')).data"></div>
+
+                <!-- $el -->
+                <button @click="$el.innerHTML = 'Hello World'" class="mt-4 p-4 border">Replace Text</button>
+
+                <!-- x-init & watch-->
+                <div x-init="$watch('posts', value => console.log(value))"></div>
+
+                <!-- $dispatch -->
+                <div @notify="alert('You have been notified')">
+                    <button @click="$dispatch('notify')" class="bg-green-700 text-white p-2 mt-4 rounded-lg">Notify</button>
+                </div>
+
+                <button @click="getLatestPosts($data.posts)" class="bg-orange-200 text-white mt-6 p-2 rounded-lg">
+                    Get Latest Post
+                </button>
+
+                <!--  -->
+
+                <div class="mt-6">
+                    <h3 class="text-2xl mb-2">Enter A Date</h3>
+                    <input x-mask="99/99/9999" placeholder="MM/DD/YYYY" class="border w-full p-2">
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer x-data class="text-center mt-10 p-2">
+        <p>Copyright &copy; <span x-text="new Date().getFullYear()"></span></p>
+    </footer>
+
+    <script>
+        function getLatestPosts(posts) {
+            console.log(posts.slice(-1).pop())
+        }
+    </script>
 </body>
 </html>
